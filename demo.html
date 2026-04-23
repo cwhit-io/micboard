@@ -117,7 +117,7 @@
       <button id="hud-button" type="button" class="btn btn-success btn-lg btn-block">Close</button>
 
     </div>
-    <div class="container-fluid fullHeight deskmode" id="container">
+    <div class="container-fluid fullHeight rowmode" id="container">
 
       <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -284,13 +284,15 @@
             <div class="battery-bar battery-bar-4"></div>
             <div class="battery-bar battery-bar-5"></div>
           </div>
-          <div class="chartzone">
+          <div class="row-stats">
             <p class="runtime"></p>
+            <p class="frequency"></p>
+          </div>
+          <div class="chartzone">
             <p class="offset"></p>
             <canvas class="slotgraph"></canvas>
             <p class="powerlock"></p>
             <p class="quality"></p>
-            <p class="frequency"></p>
           </div>
 
           <div class="errorzone">

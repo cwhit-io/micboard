@@ -21,14 +21,24 @@ export function setDisplayMode(mode) {
   const selector = document.getElementById('container');
   swapClass(selector, micboard.displayMode, mode);
   micboard.displayMode = mode;
+  // Clear inline grid styles set by setOptimalGrid so CSS rules take effect
+  if (mode !== 'deskmode') {
+    const board = document.getElementById('micboard');
+    if (board) {
+      board.style.gridTemplateColumns = '';
+      board.style.gridTemplateRows = '';
+    }
+  }
 }
 
 
 export function toggleDisplayMode() {
   switch (micboard.displayMode) {
+    case 'rowmode': setDisplayMode('deskmode');
+      break;
     case 'deskmode': setDisplayMode('tvmode');
       break;
-    case 'tvmode': setDisplayMode('deskmode');
+    case 'tvmode': setDisplayMode('rowmode');
       setBackground('NONE');
       break;
     default:

@@ -1,6 +1,7 @@
 'use strict';
 
 import { micboard, ActivateMessageBoard, updateHash } from './app.js';
+import { setOptimalGrid } from './layout.js';
 import { updateBackground } from './gif.js';
 import { initChart, charts } from './chart-smoothie.js';
 import { seedTransmitters, autoRandom } from './demodata.js';
@@ -85,6 +86,18 @@ function updateName(slotSelector, data) {
   updateBackground(slotSelector.querySelector('.mic_name'));
 }
 
+const STATUS_SLOT_CLASSES = ['slot-good', 'slot-replace', 'slot-critical', 'slot-prev-good', 'slot-prev-replace', 'slot-prev-critical', 'slot-error'];
+const STATUS_TO_SLOT_CLASS = {
+  GOOD: 'slot-good',
+  REPLACE: 'slot-replace',
+  CRITICAL: 'slot-critical',
+  PREV_GOOD: 'slot-prev-good',
+  PREV_REPLACE: 'slot-prev-replace',
+  PREV_CRITICAL: 'slot-prev-critical',
+  RX_COM_ERROR: 'slot-error',
+  TX_COM_ERROR: 'slot-error',
+};
+
 function updateStatus(slotSelector, data) {
   slotSelector.querySelector('div.mic_name').className = 'mic_name';
   slotSelector.querySelector('div.mic_name').classList.add(data.status);
@@ -92,10 +105,21 @@ function updateStatus(slotSelector, data) {
   slotSelector.querySelector('div.electrode').className = 'electrode';
   slotSelector.querySelector('div.electrode').classList.add(data.status);
 
+  // mirror status onto .col-sm for rowmode accent bar (::before pseudo-element)
+  const colSm = slotSelector.classList && slotSelector.classList.contains('col-sm')
+    ? slotSelector
+    : slotSelector.querySelector('.col-sm');
+  if (colSm) {
+    STATUS_SLOT_CLASSES.forEach(c => colSm.classList.remove(c));
+    const slotClass = STATUS_TO_SLOT_CLASS[data.status];
+    if (slotClass) colSm.classList.add(slotClass);
+  }
+
   if (micboard.settingsMode !== 'EXTENDED') {
+    const errorDisplay = micboard.displayMode === 'rowmode' ? 'flex' : 'block';
     if (data.status === 'RX_COM_ERROR') {
       slotSelector.querySelector('.chartzone').style.display = 'none';
-      slotSelector.querySelector('.errorzone').style.display = 'block';
+      slotSelector.querySelector('.errorzone').style.display = errorDisplay;
     } else {
       slotSelector.querySelector('.chartzone').style.display = 'block';
       slotSelector.querySelector('.errorzone').style.display = 'none';
@@ -280,6 +304,15 @@ export function renderDisplayList(dl) {
   }
 
   const tx = micboard.transmitters;
+
+  if (micboard.displayMode === 'rowmode') {
+    dl = [...dl].sort((a, b) => {
+      if (a === 0) return 1;
+      if (b === 0) return -1;
+      return (tx[a].name || '').localeCompare(tx[b].name || '', undefined, { sensitivity: 'base' });
+    });
+  }
+
   dl.forEach((e) => {
     let t;
     if (e !== 0) {
@@ -296,6 +329,7 @@ export function renderDisplayList(dl) {
   });
 
   infoToggle();
+  setOptimalGrid(micboard.displayMode);
 }
 
 export function renderGroup(group) {

@@ -2,8 +2,7 @@ services:
   micboard:
     build: .
     container_name: micboard
-    ports:
-      - '8058:8058'
+    network_mode: host
     volumes:
       - ./config:/root/.local/share/micboard
     restart: unless-stopped

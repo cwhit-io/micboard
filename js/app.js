@@ -15,6 +15,7 @@ import { setBackground, setInfoDrawer } from './display.js';
 import { setTimeMode } from './chart-smoothie.js';
 import { initConfigEditor } from './config.js';
 import { initBackgrounds } from './backgrounds.js';
+import { setOptimalGrid } from './layout.js';
 
 import '../css/colors.scss';
 import '../css/style.scss';
@@ -27,7 +28,7 @@ export const micboard = [];
 micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd'];
 micboard.IEM_MODELS = ['p10t'];
 micboard.url = [];
-micboard.displayMode = 'deskmode';
+micboard.displayMode = 'rowmode';
 micboard.infoDrawerMode = 'elinfo11';
 micboard.backgroundMode = 'NONE';
 micboard.settingsMode = 'NONE';
@@ -278,6 +279,10 @@ $(document).ready(() => {
   console.log('Starting Micboard version: ' + VERSION);
   readURLParameters();
   keybindings();
+
+  window.addEventListener('resize', () => {
+    setOptimalGrid(micboard.displayMode);
+  });
   if (micboard.url.demo === 'true') {
     setTimeout(() => {
       $('#hud').show();
