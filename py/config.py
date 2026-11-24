@@ -44,6 +44,10 @@ def logging_init():
                                                     maxBytes=10*1024*1024,
                                                     backupCount=5)
 
+    # Poll traffic is one DEBUG line per wireless command. Keep that in the
+    # rotating file log only. stdout is what Docker stores, and it filled the disk.
+    sthandler.setLevel(logging.INFO)
+    fhandler.setLevel(logging.DEBUG)
     sthandler.setFormatter(formatter)
     fhandler.setFormatter(formatter)
 
